@@ -1,8 +1,6 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const rephrasePrompt = `
 Here is a message: __MESSAGE__
@@ -39,7 +37,14 @@ export async function rephrase(message: string) {
 }
 
 const analysisPrompt = `
-Some content is prohibited from application-to-person (A2P) messages. I have included the rules below and a list of messages. Please analyze these messages and point out any potential violations.
+Some content is prohibited from application-to-person (A2P) messages. I have included the rules below and a list of messages.
+
+Please analyze these messages. Include a summary of how many of the messages have potential violations and the general type of violations. If a message is compliant, no feedback for that message is required.
+
+Your response should be returned as a JSON object.  The keys should be the IDs and the values should be your feedback.
+
+Something like:
+{ summary: “…..”,  message1: “This message is not compliant for these reasons” }
 
 Here are the A2P Rules:
 Rule 1: No illegal substances. Messages directly or indirectly referencing Cannabis, CBD, vape, e-cigs, etc. are prohibited. This includes slang such as “weed”, “pot”, “bud”, “reefer” etc.
@@ -47,17 +52,16 @@ Rule 1: No illegal substances. Messages directly or indirectly referencing Canna
 Rule 2: No gambling, casino apps, sweepstakes, raffles, contests, etc.
 
 Here are the messages:
-
 `;
 
-export async function analyze(messages: string[]) {
+export async function analyze(messages: { [key: string]: string }) {
   console.log("Calling OpenAI to analyze messages");
 
   const completion = await openai.chat.completions.create({
     messages: [
       {
         role: "user",
-        content: analysisPrompt + messages.join("\n - "),
+        content: analysisPrompt + JSON.stringify(messages),
       },
     ],
     model: "gpt-4",
