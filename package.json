@@ -1,13 +1,4 @@
 {
-  "name": "se-ai-project",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
   "dependencies": {
     "@types/node": "20.5.7",
     "@types/react": "18.2.21",
@@ -21,5 +12,14 @@
     "tailwindcss": "3.3.3",
     "twilio": "^4.16.0",
     "typescript": "5.2.2"
-  }
+  },
+  "name": "se-ai-project",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "next lint",
+    "start": "next start"
+  },
+  "version": "0.1.0"
 }
