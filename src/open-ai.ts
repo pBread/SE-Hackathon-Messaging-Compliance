@@ -4,24 +4,26 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function tester() {
-  const stream = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
+export async function rephrase(message: string) {
+  const prompt = `Please rephrase the following message so it does not reference anything related to marijuana. The meaning of the message should not change.
+  Message: __MESSAGE__
+  `;
+
+  console.log("Calling OpenAI to rephrase message");
+
+  const completion = await openai.chat.completions.create({
     messages: [
       {
-        role: "system",
-        content: "You are liar. Lie when you answer to any question.",
-      },
-      {
         role: "user",
-        content: "Is 10 greater than 5?",
+        content: prompt.replace("__MESSAGE__", message),
       },
     ],
-    stream: true,
+    model: "gpt-3.5-turbo",
   });
-  for await (const part of stream) {
-    process.stdout.write(part.choices[0]?.delta?.content || "");
-  }
 
-  return stream;
+  console.log("Finished OpenAI to rephrase message");
+
+  console.log(completion.choices);
+
+  return completion.choices;
 }
