@@ -2,5 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+main {
+  text-align: center;
+}
+
+header {
+  background-color: #282c34;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(10px + 2vmin);
+  justify-content: center;
+  margin-bottom: 30px;
+  padding: 2px;
+}
+
+.App-header {
+  align-items: center;
+  background-color: #282c34;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(10px + 2vmin);
+  justify-content: center;
+  margin-bottom: 30px;
+  padding: 2px;
+}
+
+.App-main {
+  padding: 20px;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.upload-container {
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
+
+.csv-data {
+  text-align: left;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
