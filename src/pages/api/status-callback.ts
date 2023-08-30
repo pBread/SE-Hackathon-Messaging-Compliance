@@ -16,6 +16,7 @@ export default async function handler(
       .fetch();
 
     const aiResponse = await rephrase(originalMessage.body);
+    console.log("Recommended Wording: ", originalMessage.body);
 
     const recommendedWording = aiResponse[0].message.content;
     console.log("Recommended Wording: ", recommendedWording);
