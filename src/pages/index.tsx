@@ -4,9 +4,6 @@ import { IconUpload } from "@tabler/icons-react";
 import Papa from "papaparse";
 
 export default function Home() {
-  const state = useAppState();
-  const setState = useSetState();
-
   return (
     <main>
       <header>
