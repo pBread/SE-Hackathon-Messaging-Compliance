@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction, createContext, useContext } from "react";
 export interface State {
   gpt: { [key: string]: {} };
   isAnalyzed: boolean;
+  isFetching: boolean;
 
   items: { [key: string]: MessageRecord };
 }
@@ -10,7 +11,10 @@ export interface State {
 export type SetState = Dispatch<SetStateAction<State>>;
 
 export const StateContext = createContext<{ state: State; setState: SetState }>(
-  { state: { items: {}, gpt: {}, isAnalyzed: false }, setState: () => {} }
+  {
+    state: { items: {}, gpt: {}, isAnalyzed: false, isFetching: false },
+    setState: () => {},
+  }
 );
 
 export function useAppState() {

@@ -1,9 +1,17 @@
 import { useAppState, useSetState, type MessageRecord } from "@/state";
-import { Button, FileInput, Table, rem } from "@mantine/core";
+import { Button, FileInput, Table, Text, clsx, rem } from "@mantine/core";
 import { IconUpload } from "@tabler/icons-react";
+import { result } from "lodash";
 import Papa from "papaparse";
+import { useEffect } from "react";
 
 export default function Home() {
+  const state = useAppState();
+
+  useEffect(() => {
+    state;
+  }, [state]);
+
   return (
     <main>
       <header>
@@ -11,10 +19,21 @@ export default function Home() {
       </header>
       <div className="content flex flex-col items-center gap-4">
         <Controls />
+        <Summary />
+
         <MessageTable />
       </div>
     </main>
   );
+}
+
+function Summary() {
+  const state = useAppState();
+  const setState = useSetState();
+
+  const summary = state?.gpt?.summary as string;
+
+  return <Text>{summary}</Text>;
 }
 
 function Controls() {
@@ -47,10 +66,17 @@ function Controls() {
   };
 
   async function analyze() {
-    await fetch("/api/analyze-messages", {
+    setState({ ...state, isFetching: true });
+    const data = await fetch("/api/analyze-messages", {
       method: "POST",
       body: JSON.stringify(state.items),
-    });
+    }).then((res) => res.json());
+
+    const raw = result(data, "0.message.content") as string;
+
+    const gpt = JSON.parse(raw);
+
+    setState({ ...state, gpt, isFetching: false });
   }
 
   return (
@@ -63,9 +89,12 @@ function Controls() {
         }}
       />
 
-      <Button style={{ background: "#282c34" }} onClick={analyze}>
-        {" "}
-        Analyze{" "}
+      <Button
+        loading={state.isFetching}
+        style={{ background: "#282c34" }}
+        onClick={analyze}
+      >
+        Analyze
       </Button>
     </div>
   );
@@ -76,15 +105,24 @@ function MessageTable() {
 
   const messages = Object.values(state.items);
 
-  const rows = messages.map((msg) => (
-    <tr key={msg.Sid}>
-      <td>{msg.From}</td>
-      <td>{msg.To}</td>
-      <td>{msg.Body}</td>
-      <td>{msg.SentDate}</td>
-      <td>{msg.Sid}</td>
-    </tr>
-  ));
+  const gpt = state.gpt;
+
+  const rows = messages.map((msg) => {
+    const analysis = result(gpt, msg.Sid, null);
+
+    const className = !!analysis ? "bg-red-50" : "";
+
+    return (
+      <tr key={msg.Sid} className={className}>
+        <td>{msg.From}</td>
+        <td>{msg.To}</td>
+        <td>{msg.Body}</td>
+        <td>{msg.SentDate}</td>
+        <td>{msg.Sid}</td>
+        <td>{analysis}</td>
+      </tr>
+    );
+  });
 
   return (
     <Table>
@@ -95,6 +133,7 @@ function MessageTable() {
           <th>Body</th>
           <th>SentDate</th>
           <th>Sid</th>
+          <th>Analysis</th>
         </tr>
       </thead>
 
