@@ -29,8 +29,6 @@ export async function rephrase(message: string) {
     model: "gpt-4",
   });
 
-  console.log("Finished OpenAI to rephrase message");
-
   console.log(completion.choices);
 
   return completion.choices;
@@ -56,6 +54,8 @@ Here are the messages:
 
 export async function analyze(messages: { [key: string]: string }) {
   console.log("Calling OpenAI to analyze messages");
+
+  console.log({ messages });
 
   const completion = await openai.chat.completions.create({
     messages: [
