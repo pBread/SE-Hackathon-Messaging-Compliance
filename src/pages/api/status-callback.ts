@@ -1,6 +1,7 @@
 import { rephrase } from "@/open-ai";
 import { twilioClient } from "@/twilio";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { omit } from "lodash";
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,7 +29,31 @@ export default async function handler(
         body: recommendedWording,
       });
 
-      res.status(200).json({ status: "New message sent", newMessage });
+      const fields = [
+        "body",
+        "direction",
+        "from",
+        "to",
+        "dateUpdated",
+        "sid",
+        "accountSid",
+        "messagingServiceSid",
+        "dateSent",
+        "dateCreated",
+      ];
+
+      res.status(200).json({
+        originalMessage: fields.reduce(
+          // @ts-ignore
+          (acc, key) => Object.assign(acc, { [key]: originalMessage[key] }),
+          {}
+        ),
+        newMessage: fields.reduce(
+          // @ts-ignore
+          (acc, key) => Object.assign(acc, { [key]: newMessage[key] }),
+          {}
+        ),
+      });
     }
   } else res.status(200).json({ status: "Ignore" });
 }

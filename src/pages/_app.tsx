@@ -5,7 +5,12 @@ import { State, StateContext } from "@/state";
 import { useState } from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [state, setState] = useState<State>({ items: {}, gpt: {} });
+  const [state, setState] = useState<State>({
+    items: {},
+    gpt: {},
+    isAnalyzed: false,
+    isFetching: false,
+  });
 
   return (
     <StateContext.Provider value={{ state, setState }}>
